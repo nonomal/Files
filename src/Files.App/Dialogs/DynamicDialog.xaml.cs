@@ -1,15 +1,17 @@
-using Files.App.ViewModels.Dialogs;
-using Files.Shared.Enums;
-using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Threading.Tasks;
+// Copyright (c) Files Community
+// Licensed under the MIT License.
 
-// The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+using Files.App.ViewModels.Dialogs;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Files.App.Dialogs
 {
 	public sealed partial class DynamicDialog : ContentDialog, IDisposable
 	{
+		private FrameworkElement RootAppElement
+			=> (FrameworkElement)MainWindow.Instance.Content;
+
 		public DynamicDialogViewModel ViewModel
 		{
 			get => (DynamicDialogViewModel)DataContext;
@@ -21,16 +23,9 @@ namespace Files.App.Dialogs
 			get => ViewModel.DynamicResult;
 		}
 
-		public new Task<ContentDialogResult> ShowAsync() => SetContentDialogRoot(this).ShowAsync().AsTask();
-
-		// WINUI3
-		private ContentDialog SetContentDialogRoot(ContentDialog contentDialog)
+		public new Task<ContentDialogResult> ShowAsync()
 		{
-			if (Windows.Foundation.Metadata.ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8))
-			{
-				contentDialog.XamlRoot = App.Window.Content.XamlRoot;
-			}
-			return contentDialog;
+			return this.TryShowAsync();
 		}
 
 		public DynamicDialog(DynamicDialogViewModel dynamicDialogViewModel)
@@ -40,16 +35,6 @@ namespace Files.App.Dialogs
 			dynamicDialogViewModel.HideDialog = Hide;
 			ViewModel = dynamicDialogViewModel;
 		}
-
-		#region IDisposable
-
-		public void Dispose()
-		{
-			ViewModel?.Dispose();
-			ViewModel = null;
-		}
-
-		#endregion IDisposable
 
 		private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
 		{
@@ -69,6 +54,12 @@ namespace Files.App.Dialogs
 		private void ContentDialog_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
 		{
 			ViewModel.KeyDownCommand.Execute(e);
+		}
+
+		public void Dispose()
+		{
+			ViewModel?.Dispose();
+			ViewModel = null;
 		}
 	}
 }
