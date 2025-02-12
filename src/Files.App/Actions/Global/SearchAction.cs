@@ -1,38 +1,41 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using Files.App.Commands;
-using Files.App.Contexts;
-using Files.App.Extensions;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using Windows.System;
+﻿// Copyright (c) Files Community
+// Licensed under the MIT License.
 
 namespace Files.App.Actions
 {
-	internal class SearchAction : ObservableObject, IAction
+	internal sealed partial class SearchAction : ObservableObject, IAction
 	{
-		private readonly IContentPageContext context = Ioc.Default.GetRequiredService<IContentPageContext>();
+		private readonly IContentPageContext context;
 
-		public string Label { get; } = "Search".GetLocalizedResource();
+		public string Label
+			=> "Search".GetLocalizedResource();
 
-		public string Description { get; } = "TODO: Need to be described.";
+		public string Description
+			=> "SearchDescription".GetLocalizedResource();
 
-		public HotKey HotKey { get; } = new(VirtualKey.F, VirtualKeyModifiers.Control);
+		public HotKey HotKey
+			=> new(Keys.F, KeyModifiers.Ctrl);
 
-		public HotKey SecondHotKey { get; } = new(VirtualKey.F3);
+		public HotKey SecondHotKey
+			=> new(Keys.F3);
 
-		public RichGlyph Glyph { get; } = new();
+		public RichGlyph Glyph
+			=> new();
 
-		public bool IsExecutable => !context.IsSearchBoxVisible;
+		public bool IsExecutable
+			=> !context.IsSearchBoxVisible;
 
 		public SearchAction()
 		{
+			context = Ioc.Default.GetRequiredService<IContentPageContext>();
+
 			context.PropertyChanged += Context_PropertyChanged;
 		}
 
-		public Task ExecuteAsync()
+		public Task ExecuteAsync(object? parameter = null)
 		{
 			context.ShellPage!.ToolbarViewModel.SwitchSearchBoxVisibility();
+
 			return Task.CompletedTask;
 		}
 

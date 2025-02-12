@@ -1,17 +1,18 @@
-﻿using Files.App.Commands;
-using Files.App.Extensions;
-using System.Diagnostics;
-using Windows.System;
+﻿// Copyright (c) Files Community
+// Licensed under the MIT License.
 
 namespace Files.App.Actions
 {
-	internal class OpenTerminalAsAdminAction : OpenTerminalAction
+	internal sealed partial class OpenTerminalAsAdminAction : OpenTerminalAction
 	{
-		public override string Label { get; } = "OpenTerminalAsAdmin".GetLocalizedResource();
+		public override string Label
+			=> "OpenTerminalAsAdmin".GetLocalizedResource();
 
-		public override string Description => "TODO: Need to be described.";
+		public override string Description
+			=> "OpenTerminalAsAdminDescription".GetLocalizedResource();
 
-		public override HotKey HotKey { get; } = new((VirtualKey)192, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+		public override HotKey HotKey
+			=> new(Keys.Oem3, KeyModifiers.CtrlShift);
 
 		protected override ProcessStartInfo? GetProcessStartInfo()
 		{

@@ -1,3 +1,6 @@
+// Copyright (c) Files Community
+// Licensed under the MIT License.
+
 using System;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -17,7 +20,7 @@ namespace Files.App.Extensions
 				return null;
 			}
 
-			using var readStream = stream.AsStreamForRead();
+			await using var readStream = stream.AsStreamForRead();
 
 			return await readStream.ToByteArrayAsync();
 		}
